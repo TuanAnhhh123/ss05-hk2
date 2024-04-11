@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guess the Word Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: rgb(0, 132, 255);
+      }
+
+      #word-container {
+        margin-top: 20px;
+        font-size: 24px;
+      }
+
+      #guesses-left {
+        margin-top: 10px;
+      }
+
+      input[type="text"] {
+        margin-top: 10px;
+        padding: 5px;
+        width: 200px;
+        height: 20px;
+        border-radius: 100px;
+      }
+
+      button {
+        margin-top: 10px;
+        padding: 5px 20px;
+        cursor: pointer;
+        background-color: greenyellow;
+        border-radius: 100px;
+      }
+
+      #play-again-btn {
+        margin-top: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1>The Word Is :</h1>
+    <div id="word-container"></div>
+    <div id="guesses-left">Guesses left: <span id="guesses">3</span></div>
+    <input type="text" id="guess-input" placeholder="Enter your guess" />
+    <button id="guess-btn">Guess</button>
+    <button id="play-again-btn" style="display: none">Play Again</button>
+
+    <script>
+      const words = ["hoa","hao","han","nam","anh","tan","thu","tai","tho"];
+
+      let word;
+      let guessesLeft;
+      let guessedWord;
+
+      function newGame() {
+        guessesLeft = 5;
+        document.getElementById("guesses").innerText = guessesLeft;
+
+        word = words[Math.floor(Math.random() * words.length)];
+
+        guessedWord = "_".repeat(word.length);
+        updateWordDisplay();
+
+        document.getElementById("guess-input").style.display = "inline";
+        document.getElementById("guess-btn").style.display = "inline";
+        document.getElementById("play-again-btn").style.display = "none";
+      }
+
+      function updateWordDisplay() {
+        document.getElementById("word-container").innerText = guessedWord;
+      }
+
+      function guessLetter() {
+        const guessInput = document
+          .getElementById("guess-input")
+          .value.toLowerCase();
+        document.getElementById("guess-input").value = "";
+
+        if (guessInput.length !== 1 || !/[a-z]/.test(guessInput)) {
+          alert("Vui lòng nhập 1 chữ cái duy nhất");
+          return;
+        }
+
+        if (word.includes(guessInput)) {
+          for (let i = 0; i < word.length; i++) {
+            if (word[i] === guessInput) {
+              guessedWord =
+                guessedWord.substr(0, i) +
+                guessInput +
+                guessedWord.substr(i + 1);
+            }
+          }
+          updateWordDisplay();
+
+          if (!guessedWord.includes("_")) {
+            alert("Chúc mừng! Bạn đã đoán được từ đó.");
+            endGame();
+          }
+        } else {
+          guessesLeft--;
+          document.getElementById("guesses").innerText = guessesLeft;
+          if (guessesLeft === 0) {
+            alert("Trò chơi kết thúc! Từ đó là:" + word);
+            endGame();
+          }
+        }
+      }
+
+      function endGame() {
+        document.getElementById("guess-input").style.display = "none";
+        document.getElementById("guess-btn").style.display = "none";
+        document.getElementById("play-again-btn").style.display = "inline";
+      }
+      document
+        .getElementById("guess-btn")
+        .addEventListener("click", guessLetter);
+      document
+        .getElementById("play-again-btn")
+        .addEventListener("click", newGame);
+
+      window.onload = newGame;
+    </script>
+  </body>
+</html>
